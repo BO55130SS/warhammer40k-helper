@@ -12,7 +12,7 @@
 <div id="setupScreen" class="screen active">
   <header>
     <div class="round">Warhammer 40K Helper</div>
-    <div class="phase">ゲーム開始設定</div>
+    <div class="phase">Ver.0.6 ゲーム開始設定</div>
   </header>
 
   <main class="setup">
@@ -30,7 +30,7 @@
       <select id="player2Detachment"></select>
 
       <p class="note">
-        Ver.0.5：勢力選択に加えて、デタッチメント選択を追加しました。
+        勢力とデタッチメントを選んでゲームを開始します。
       </p>
     </div>
 
@@ -47,6 +47,7 @@
   <main>
     <section class="player active-player">
       <h2 id="player1Title">先攻</h2>
+
       <div class="status">
         <div class="badge">CP：<span id="p1cp">0</span></div>
         <div class="badge">VP：<span id="p1vp">0</span></div>
@@ -60,18 +61,19 @@
       </div>
 
       <div class="box">
-        <div class="box-title">今やること</div>
-        <ul id="activeTasks"></ul>
+        <div class="box-title">アーミールール</div>
+        <ul id="player1ArmyRules"></ul>
       </div>
 
       <div class="box">
-        <div class="box-title">使用可能</div>
-        <ul id="activeAvailable"></ul>
+        <div class="box-title">今やること</div>
+        <ul id="activeTasks"></ul>
       </div>
     </section>
 
     <section class="player inactive-player">
       <h2 id="player2Title">後攻</h2>
+
       <div class="status">
         <div class="badge">CP：<span id="p2cp">0</span></div>
         <div class="badge">VP：<span id="p2vp">0</span></div>
@@ -85,13 +87,13 @@
       </div>
 
       <div class="box">
-        <div class="box-title">相手が今できること</div>
-        <ul id="inactiveTasks"></ul>
+        <div class="box-title">相手のアーミールール</div>
+        <ul id="player2ArmyRules"></ul>
       </div>
 
-      <div class="box">
-        <div class="box-title">割り込み可能</div>
-        <ul id="inactiveAvailable"></ul>
+      <div class="box important">
+        <div class="box-title">相手が今できること</div>
+        <ul id="inactiveTasks"></ul>
       </div>
     </section>
   </main>
