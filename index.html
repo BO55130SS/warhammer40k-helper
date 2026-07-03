@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warhammer 40K Helper</title>
+
 <style>
 body{
   margin:0;
@@ -25,14 +26,43 @@ header{
   color:#ffd966;
   margin-top:6px;
 }
+.screen{
+  display:none;
+}
+.screen.active{
+  display:block;
+}
+.setup{
+  padding:20px;
+}
+.card{
+  background:#1f1f1f;
+  padding:16px;
+  border-radius:10px;
+  margin-bottom:16px;
+}
+label{
+  display:block;
+  margin-bottom:6px;
+  color:#ffd966;
+  font-weight:bold;
+}
+select{
+  width:100%;
+  padding:12px;
+  font-size:18px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:12px;
+}
 .player{
   padding:12px;
   border-bottom:2px solid #333;
 }
-.active{
+.active-player{
   background:#1d2b3a;
 }
-.inactive{
+.inactive-player{
   background:#2a1d1d;
 }
 h2{
@@ -82,95 +112,206 @@ button{
   color:white;
   background:#444;
 }
-.next{
+.primary{
   background:#0078d7;
 }
 main{
   padding-bottom:80px;
+}
+.note{
+  color:#ccc;
+  font-size:14px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="round">第1バトルラウンド</div>
-  <div class="phase">現在：スペースマリーンのコマンドフェイズ</div>
-</header>
+<div id="setupScreen" class="screen active">
+  <header>
+    <div class="round">Warhammer 40K Helper</div>
+    <div class="phase">ゲーム開始設定</div>
+  </header>
 
-<main>
+  <main class="setup">
+    <div class="card">
+      <label>プレイヤー1の勢力</label>
+      <select id="player1Faction">
+        <option value="Space Marines">Space Marines</option>
+        <option value="Orks">Orks</option>
+      </select>
 
-<section class="player active">
-  <h2>先攻：スペースマリーン</h2>
-  <div class="status">
-    <div class="badge">CP：0</div>
-    <div class="badge">VP：0</div>
-  </div>
+      <label>プレイヤー2の勢力</label>
+      <select id="player2Faction">
+        <option value="Orks">Orks</option>
+        <option value="Space Marines">Space Marines</option>
+      </select>
 
-  <div class="box">
-    <div class="box-title">今やること</div>
-    <ul>
-      <li>CPを1増やす</li>
-      <li>バトルショックを確認する</li>
-      <li>コマンドフェイズ能力を確認する</li>
-      <li>ミッションを確認する</li>
-    </ul>
-  </div>
+      <p class="note">
+        Ver.0.3では、まず勢力選択だけを実装しています。  
+        次のバージョンでデタッチメント選択とルールデータを追加します。
+      </p>
+    </div>
 
-  <div class="box">
-    <div class="box-title">使用可能</div>
-    <ul>
-      <li>戦闘の誓い：未使用</li>
-      <li>コマンドリロール：使用可能</li>
-    </ul>
-  </div>
+    <button class="primary" onclick="startGame()">ゲーム開始</button>
+  </main>
+</div>
 
-  <div class="box">
-    <div class="box-title">使用済み</div>
-    <ul>
-      <li>なし</li>
-    </ul>
-  </div>
-</section>
+<div id="gameScreen" class="screen">
+  <header>
+    <div class="round" id="roundText">第1バトルラウンド</div>
+    <div class="phase" id="phaseText">現在：プレイヤー1のコマンドフェイズ</div>
+  </header>
 
-<section class="player inactive">
-  <h2>後攻：オルク</h2>
-  <div class="status">
-    <div class="badge">CP：0</div>
-    <div class="badge">VP：0</div>
-  </div>
+  <main>
+    <section class="player active-player">
+      <h2 id="player1Title">先攻：Space Marines</h2>
+      <div class="status">
+        <div class="badge">CP：<span id="p1cp">0</span></div>
+        <div class="badge">VP：<span id="p1vp">0</span></div>
+      </div>
 
-  <div class="box">
-    <div class="box-title">今できること</div>
-    <ul>
-      <li>相手の処理を確認する</li>
-      <li>このタイミングで使える能力があれば使用する</li>
-    </ul>
-  </div>
+      <div class="box">
+        <div class="box-title">今やること</div>
+        <ul id="activeTasks">
+          <li>CPを1増やす</li>
+          <li>バトルショックを確認する</li>
+          <li>コマンドフェイズ能力を確認する</li>
+          <li>ミッションを確認する</li>
+        </ul>
+      </div>
 
-  <div class="box">
-    <div class="box-title">割り込み可能</div>
-    <ul>
-      <li>コマンドリロール：使用可能</li>
-      <li>1ゲーム1回能力：未使用</li>
-    </ul>
-  </div>
+      <div class="box">
+        <div class="box-title">使用可能</div>
+        <ul id="activeAvailable">
+          <li>勢力ルール：確認待ち</li>
+          <li>コマンドリロール：使用可能</li>
+        </ul>
+      </div>
+    </section>
 
-  <div class="box">
-    <div class="box-title">使用済み</div>
-    <ul>
-      <li>なし</li>
-    </ul>
-  </div>
-</section>
+    <section class="player inactive-player">
+      <h2 id="player2Title">後攻：Orks</h2>
+      <div class="status">
+        <div class="badge">CP：<span id="p2cp">0</span></div>
+        <div class="badge">VP：<span id="p2vp">0</span></div>
+      </div>
 
-</main>
+      <div class="box">
+        <div class="box-title">相手が今できること</div>
+        <ul id="inactiveTasks">
+          <li>相手の処理を確認する</li>
+          <li>このタイミングで使える能力があれば使用する</li>
+        </ul>
+      </div>
 
-<footer>
-  <button>戻る</button>
-  <button>質問</button>
-  <button class="next">完了して次へ</button>
-</footer>
+      <div class="box">
+        <div class="box-title">割り込み可能</div>
+        <ul id="inactiveAvailable">
+          <li>コマンドリロール：使用可能</li>
+          <li>相手ターン用能力：確認待ち</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <button onclick="backToSetup()">設定へ戻る</button>
+    <button>質問</button>
+    <button class="primary">完了して次へ</button>
+  </footer>
+</div>
+
+<script>
+let gameState = {
+  round: 1,
+  phase: "コマンドフェイズ",
+  activePlayer: 1,
+  player1Faction: "Space Marines",
+  player2Faction: "Orks",
+  p1cp: 0,
+  p2cp: 0,
+  p1vp: 0,
+  p2vp: 0
+};
+
+function startGame(){
+  gameState.player1Faction = document.getElementById("player1Faction").value;
+  gameState.player2Faction = document.getElementById("player2Faction").value;
+
+  document.getElementById("setupScreen").classList.remove("active");
+  document.getElementById("gameScreen").classList.add("active");
+
+  updateScreen();
+}
+
+function backToSetup(){
+  document.getElementById("gameScreen").classList.remove("active");
+  document.getElementById("setupScreen").classList.add("active");
+}
+
+function updateScreen(){
+  document.getElementById("roundText").textContent = "第" + gameState.round + "バトルラウンド";
+  document.getElementById("phaseText").textContent =
+    "現在：" + gameState.player1Faction + "の" + gameState.phase;
+
+  document.getElementById("player1Title").textContent =
+    "先攻：" + gameState.player1Faction;
+
+  document.getElementById("player2Title").textContent =
+    "後攻：" + gameState.player2Faction;
+
+  document.getElementById("p1cp").textContent = gameState.p1cp;
+  document.getElementById("p2cp").textContent = gameState.p2cp;
+  document.getElementById("p1vp").textContent = gameState.p1vp;
+  document.getElementById("p2vp").textContent = gameState.p2vp;
+
+  updateFactionHints();
+}
+
+function updateFactionHints(){
+  const p1 = gameState.player1Faction;
+  const p2 = gameState.player2Faction;
+
+  document.getElementById("activeAvailable").innerHTML =
+    getFactionAvailableText(p1, true);
+
+  document.getElementById("inactiveAvailable").innerHTML =
+    getFactionAvailableText(p2, false);
+}
+
+function getFactionAvailableText(faction, isActive){
+  if(faction === "Space Marines"){
+    if(isActive){
+      return `
+        <li>戦闘の誓い：このターンで確認</li>
+        <li>コマンドリロール：使用可能</li>
+      `;
+    }else{
+      return `
+        <li>防御系ストラタジェム：条件確認</li>
+        <li>コマンドリロール：使用可能</li>
+      `;
+    }
+  }
+
+  if(faction === "Orks"){
+    if(isActive){
+      return `
+        <li>ワァーグ！：未使用なら宣言可能</li>
+        <li>コマンドリロール：使用可能</li>
+      `;
+    }else{
+      return `
+        <li>相手ターン中に使える能力：条件確認</li>
+        <li>コマンドリロール：使用可能</li>
+      `;
+    }
+  }
+
+  return `<li>ルールデータ未登録</li>`;
+}
+</script>
 
 </body>
 </html>
