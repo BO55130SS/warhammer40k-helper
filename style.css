@@ -99,7 +99,7 @@ h2{margin:0 0 8px;}
 .box-title{
   color:#ffd966;
   font-weight:bold;
-  margin-bottom:6px;
+  margin-bottom:8px;
 }
 
 ul{
@@ -109,6 +109,54 @@ ul{
 
 li{
   margin-bottom:5px;
+}
+
+.task-row, .rule-row{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  background:rgba(255,255,255,0.06);
+  padding:8px;
+  border-radius:8px;
+  margin-bottom:8px;
+}
+
+.task-row.done, .rule-row.used{
+  opacity:0.55;
+  text-decoration:line-through;
+}
+
+.task-row input{
+  transform:scale(1.2);
+  margin-top:3px;
+}
+
+.rule-main{
+  flex:1;
+}
+
+.rule-name{
+  font-weight:bold;
+  color:#fff;
+}
+
+.rule-meta{
+  font-size:13px;
+  color:#ccc;
+  margin-top:3px;
+}
+
+.rule-summary{
+  font-size:14px;
+  color:#eee;
+  margin-top:4px;
+}
+
+.use-button{
+  flex:0 0 auto;
+  padding:7px 9px;
+  font-size:13px;
+  background:#555;
 }
 
 footer{
@@ -162,3 +210,4 @@ main{padding-bottom:90px;}
   background:#222;
   padding:4px 8px;
   border-radius:6px;
+}
