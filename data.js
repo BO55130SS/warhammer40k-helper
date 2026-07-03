@@ -1,4 +1,4 @@
-const APP_VERSION = "Ver.0.8";
+const APP_VERSION = "Ver.0.9";
 
 const factionData = {
   "Space Marines": {
@@ -16,9 +16,20 @@ const factionData = {
           {
             name: "Command Re-roll",
             cp: 1,
-            timing: "必要なロール時",
+            timing: "ロール時",
+            phases: ["command","movement","shooting","charge","fight"],
             owner: "both",
+            once: "必要時",
             summary: "特定のロールを振り直す。"
+          },
+          {
+            name: "Armour of Contempt",
+            cp: 1,
+            timing: "相手の射撃/白兵戦で対象にされた時",
+            phases: ["shooting","fight"],
+            owner: "reactive",
+            once: "フェイズごと",
+            summary: "攻撃のAPを軽減する防御系ストラタジェム。"
           }
         ]
       }
@@ -27,8 +38,10 @@ const factionData = {
       {
         name: "Oath of Moment",
         timing: "自軍コマンドフェイズ",
+        phase: "command",
         summary: "敵ユニット1つを選び、そのターンの重要目標にする。",
-        once: "ターンごと"
+        once: "ターンごと",
+        checklist: true
       }
     ]
   },
@@ -48,9 +61,20 @@ const factionData = {
           {
             name: "Command Re-roll",
             cp: 1,
-            timing: "必要なロール時",
+            timing: "ロール時",
+            phases: ["command","movement","shooting","charge","fight"],
             owner: "both",
+            once: "必要時",
             summary: "特定のロールを振り直す。"
+          },
+          {
+            name: "Unbridled Carnage",
+            cp: 1,
+            timing: "白兵戦で攻撃する時",
+            phases: ["fight"],
+            owner: "active",
+            once: "フェイズごと",
+            summary: "接近戦攻撃を強化する。"
           }
         ]
       }
@@ -59,8 +83,10 @@ const factionData = {
       {
         name: "Waaagh!",
         timing: "自軍コマンドフェイズ",
+        phase: "command",
         summary: "1ゲームに1回、オルク全軍を強化する。",
-        once: "1ゲーム1回"
+        once: "1ゲーム1回",
+        checklist: true
       }
     ]
   }
@@ -71,10 +97,10 @@ const phaseData = [
     id: "command",
     name: "コマンドフェイズ",
     selfTasks: [
-      "CPを1増やす",
-      "バトルショックを確認する",
-      "アーミールールを確認する",
-      "デタッチメントルールを確認する"
+      { id:"gain_cp", text:"CPを1増やす" },
+      { id:"battle_shock", text:"バトルショックを確認する" },
+      { id:"army_rule", text:"アーミールールを確認する" },
+      { id:"mission", text:"ミッション・得点条件を確認する" }
     ],
     opponentTasks: [
       "相手のコマンドフェイズ処理を確認する",
@@ -85,10 +111,10 @@ const phaseData = [
     id: "movement",
     name: "移動フェイズ",
     selfTasks: [
-      "通常移動するユニットを選ぶ",
-      "全力移動するユニットを選ぶ",
-      "退却するユニットを確認する",
-      "増援・戦略的予備戦力を確認する"
+      { id:"normal_move", text:"通常移動するユニットを選ぶ" },
+      { id:"advance", text:"全力移動するユニットを選ぶ" },
+      { id:"fall_back", text:"退却するユニットを確認する" },
+      { id:"reserves", text:"増援・戦略的予備戦力を確認する" }
     ],
     opponentTasks: [
       "相手の移動終了時に使える能力を確認する",
@@ -99,10 +125,10 @@ const phaseData = [
     id: "shooting",
     name: "射撃フェイズ",
     selfTasks: [
-      "射撃するユニットを選ぶ",
-      "射撃対象を選ぶ",
-      "命中→負傷→セーヴ→ダメージを解決する",
-      "射撃後に使える能力を確認する"
+      { id:"select_shooter", text:"射撃するユニットを選ぶ" },
+      { id:"select_target", text:"射撃対象を選ぶ" },
+      { id:"resolve_attack", text:"命中→負傷→セーヴ→ダメージを解決する" },
+      { id:"after_shooting", text:"射撃後に使える能力を確認する" }
     ],
     opponentTasks: [
       "対象にされた時に使える防御系能力を確認する",
@@ -113,10 +139,10 @@ const phaseData = [
     id: "charge",
     name: "突撃フェイズ",
     selfTasks: [
-      "突撃するユニットを選ぶ",
-      "突撃対象を宣言する",
-      "2D6で突撃距離を判定する",
-      "突撃成功後の配置を確認する"
+      { id:"select_charger", text:"突撃するユニットを選ぶ" },
+      { id:"declare_target", text:"突撃対象を宣言する" },
+      { id:"charge_roll", text:"2D6で突撃距離を判定する" },
+      { id:"charge_move", text:"突撃成功後の配置を確認する" }
     ],
     opponentTasks: [
       "突撃宣言時に使える能力を確認する",
@@ -127,10 +153,10 @@ const phaseData = [
     id: "fight",
     name: "白兵戦フェイズ",
     selfTasks: [
-      "戦うユニットを選ぶ",
-      "パイルインを行う",
-      "近接攻撃を解決する",
-      "コンソリデートを確認する"
+      { id:"select_fighter", text:"戦うユニットを選ぶ" },
+      { id:"pile_in", text:"パイルインを行う" },
+      { id:"melee_attack", text:"近接攻撃を解決する" },
+      { id:"consolidate", text:"コンソリデートを確認する" }
     ],
     opponentTasks: [
       "防御系能力を確認する",
