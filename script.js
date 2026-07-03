@@ -1,13 +1,13 @@
-console.log("Warhammer40K Helper Start");
+console.log("Warhammer40K Helper Ver0.6");
 
 let gameState = {
   round: 1,
   phase: "コマンドフェイズ",
   activePlayer: 1,
-  player1Faction: "Space Marines",
-  player2Faction: "Orks",
-  player1Detachment: "Gladius Task Force",
-  player2Detachment: "War Horde",
+  player1Faction: "",
+  player2Faction: "",
+  player1Detachment: "",
+  player2Detachment: "",
   p1cp: 0,
   p2cp: 0,
   p1vp: 0,
@@ -35,13 +35,13 @@ function loadFactionSelects(){
 
   loadDetachmentSelects();
 
-  p1Faction.addEventListener("change", loadDetachmentSelects);
-  p2Faction.addEventListener("change", loadDetachmentSelects);
+  p1Faction.onchange = loadDetachmentSelects;
+  p2Faction.onchange = loadDetachmentSelects;
 }
 
 function loadDetachmentSelects(){
-  const p1Faction = document.getElementById("player1Faction").value;
-  const p2Faction = document.getElementById("player2Faction").value;
+  const p1FactionName = document.getElementById("player1Faction").value;
+  const p2FactionName = document.getElementById("player2Faction").value;
 
   const p1Detachment = document.getElementById("player1Detachment");
   const p2Detachment = document.getElementById("player2Detachment");
@@ -49,13 +49,16 @@ function loadDetachmentSelects(){
   p1Detachment.innerHTML = "";
   p2Detachment.innerHTML = "";
 
-  factionData[p1Faction].detachments.forEach(detachment => {
+  Object.keys(factionData[p1FactionName].detachments).forEach(detachment => {
     p1Detachment.innerHTML += `<option value="${detachment}">${detachment}</option>`;
   });
 
-  factionData[p2Faction].detachments.forEach(detachment => {
+  Object.keys(factionData[p2FactionName].detachments).forEach(detachment => {
     p2Detachment.innerHTML += `<option value="${detachment}">${detachment}</option>`;
   });
+
+  p1Detachment.value = factionData[p1FactionName].defaultDetachment;
+  p2Detachment.value = factionData[p2FactionName].defaultDetachment;
 }
 
 function startGame(){
@@ -99,47 +102,41 @@ function updateScreen(){
   document.getElementById("p1vp").textContent = gameState.p1vp;
   document.getElementById("p2vp").textContent = gameState.p2vp;
 
+  updateArmyRules();
   updateTasks();
-  updateFactionRules();
+}
+
+function updateArmyRules(){
+  const p1Data = factionData[gameState.player1Faction];
+  const p2Data = factionData[gameState.player2Faction];
+
+  document.getElementById("player1ArmyRules").innerHTML =
+    makeArmyRuleList(p1Data);
+
+  document.getElementById("player2ArmyRules").innerHTML =
+    makeArmyRuleList(p2Data);
+}
+
+function makeArmyRuleList(faction){
+  let html = "";
+
+  faction.armyRules.forEach(rule => {
+    html += `<li><strong>${rule.name}</strong>：${rule.summary}</li>`;
+  });
+
+  return html;
 }
 
 function updateTasks(){
   document.getElementById("activeTasks").innerHTML = `
     <li>CPを1増やす</li>
     <li>バトルショックを確認する</li>
-    <li>このフェイズで使える能力を確認する</li>
-    <li>ミッションを確認する</li>
+    <li>アーミールールを確認する</li>
+    <li>デタッチメントルールを確認する</li>
   `;
 
   document.getElementById("inactiveTasks").innerHTML = `
-    <li>相手の処理を確認する</li>
-    <li>このタイミングで使える能力があれば確認する</li>
+    <li>相手のコマンドフェイズ処理を確認する</li>
+    <li>このタイミングで使える割り込み能力があるか確認する</li>
   `;
-}
-
-function updateFactionRules(){
-  const p1Data = factionData[gameState.player1Faction];
-  const p2Data = factionData[gameState.player2Faction];
-
-  document.getElementById("activeAvailable").innerHTML =
-    makeRuleList(p1Data, true);
-
-  document.getElementById("inactiveAvailable").innerHTML =
-    makeRuleList(p2Data, false);
-}
-
-function makeRuleList(faction, isActive){
-  let html = "";
-
-  faction.armyRules.forEach(rule => {
-    html += `<li>${rule.name}：${rule.summary}</li>`;
-  });
-
-  html += `<li>コマンドリロール：使用可能</li>`;
-
-  if(!isActive){
-    html += `<li>相手ターン中の能力：条件確認</li>`;
-  }
-
-  return html;
 }
