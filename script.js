@@ -1,4 +1,4 @@
-console.log("40K Navigator Ver0.8");
+console.log("40K Navigator Ver0.9");
 
 let gameState = {
   round: 1,
@@ -12,7 +12,9 @@ let gameState = {
   p1cp: 0,
   p2cp: 0,
   p1vp: 0,
-  p2vp: 0
+  p2vp: 0,
+  checkedTasks: {},
+  usedRules: {}
 };
 
 window.onload = function(){
@@ -71,6 +73,8 @@ function startGame(){
   gameState.currentTurn = gameState.firstTurn;
   gameState.round = 1;
   gameState.phaseIndex = 0;
+  gameState.checkedTasks = {};
+  gameState.usedRules = {};
 
   document.getElementById("setupScreen").classList.remove("active");
   document.getElementById("gameScreen").classList.add("active");
@@ -85,6 +89,10 @@ function backToSetup(){
 
 function currentPhase(){
   return phaseData[gameState.phaseIndex];
+}
+
+function stateKey(){
+  return `${gameState.round}_${gameState.currentTurn}_${currentPhase().id}`;
 }
 
 function nextStep(){
@@ -158,17 +166,43 @@ function updateScreen(){
 
 function updateTasks(){
   const phase = currentPhase();
-  const selfTasks = document.getElementById("selfTasks");
+  const target = document.getElementById("selfTasks");
+  const key = stateKey();
+
+  if(!gameState.checkedTasks[key]){
+    gameState.checkedTasks[key] = {};
+  }
+
+  let tasks;
 
   if(gameState.currentTurn === "self"){
-    selfTasks.innerHTML = phase.selfTasks.map(t => `<li>${t}</li>`).join("");
+    tasks = phase.selfTasks;
   }else{
-    selfTasks.innerHTML = [
-      "相手ターンです",
-      "相手の行動を確認する",
-      "自分が割り込める能力・ストラタジェムを確認する"
-    ].map(t => `<li>${t}</li>`).join("");
+    tasks = [
+      { id:"watch_opponent", text:"相手ターンです。相手の行動を確認する" },
+      { id:"reactive_rules", text:"自分が割り込める能力・ストラタジェムを確認する" }
+    ];
   }
+
+  target.innerHTML = tasks.map(task => {
+    const checked = gameState.checkedTasks[key][task.id] ? "checked" : "";
+    const doneClass = checked ? "done" : "";
+    return `
+      <label class="task-row ${doneClass}">
+        <input type="checkbox" ${checked} onchange="toggleTask('${task.id}', this.checked)">
+        <span>${task.text}</span>
+      </label>
+    `;
+  }).join("");
+}
+
+function toggleTask(taskId, checked){
+  const key = stateKey();
+  if(!gameState.checkedTasks[key]){
+    gameState.checkedTasks[key] = {};
+  }
+  gameState.checkedTasks[key][taskId] = checked;
+  updateTasks();
 }
 
 function updateAvailableRules(){
@@ -178,40 +212,92 @@ function updateAvailableRules(){
   const opponentData = factionData[gameState.player2Faction];
 
   document.getElementById("selfAvailable").innerHTML =
-    makeAvailableList(selfData, gameState.currentTurn === "self", phase);
+    makeAvailableList("self", selfData, gameState.player1Detachment, gameState.currentTurn === "self", phase);
 
   document.getElementById("opponentAvailable").innerHTML =
-    makeAvailableList(opponentData, gameState.currentTurn === "opponent", phase, true);
+    makeAvailableList("opponent", opponentData, gameState.player2Detachment, gameState.currentTurn === "opponent", phase, true);
 }
 
-function makeAvailableList(faction, isActiveTurn, phase, isOpponentBox=false){
-  let list = [];
+function makeAvailableList(owner, faction, detachmentName, isActiveTurn, phase, isOpponentBox=false){
+  let rules = [];
 
   faction.armyRules.forEach(rule => {
-    if(isActiveTurn || rule.once === "1ゲーム1回"){
-      list.push(`<strong>${rule.name}</strong>：${rule.summary}`);
+    if(rule.phase === phase.id || rule.once === "1ゲーム1回"){
+      if(isActiveTurn || rule.once === "1ゲーム1回"){
+        rules.push({
+          type:"army",
+          name:rule.name,
+          timing:rule.timing,
+          summary:rule.summary,
+          cp:null,
+          once:rule.once
+        });
+      }
     }
   });
 
-  if(phase.id === "movement"){
-    list.push("警戒射撃など、このタイミングで使える割り込みを確認");
+  const detachment = faction.detachments[detachmentName];
+  if(detachment && detachment.detachmentRule){
+    rules.push({
+      type:"detachment",
+      name:detachment.detachmentRule.name,
+      timing:detachment.detachmentRule.timing,
+      summary:detachment.detachmentRule.summary,
+      cp:null,
+      once:"常時"
+    });
   }
 
-  if(phase.id === "shooting"){
-    list.push("対象にされた時の防御系能力を確認");
+  if(detachment && detachment.stratagems){
+    detachment.stratagems.forEach(stratagem => {
+      if(stratagem.phases.includes(phase.id)){
+        const shouldShow =
+          stratagem.owner === "both" ||
+          (stratagem.owner === "active" && isActiveTurn) ||
+          (stratagem.owner === "reactive" && !isActiveTurn);
+
+        if(shouldShow){
+          rules.push({
+            type:"stratagem",
+            name:stratagem.name,
+            timing:stratagem.timing,
+            summary:stratagem.summary,
+            cp:stratagem.cp,
+            once:stratagem.once
+          });
+        }
+      }
+    });
   }
 
-  list.push("Command Re-roll：必要なロール時に使用可能");
-
-  if(!isActiveTurn && isOpponentBox){
-    list.unshift("相手ターンで使用可能な能力のみ要確認");
+  if(rules.length === 0){
+    return `<div class="rule-row"><div class="rule-main">今使えるものはありません</div></div>`;
   }
 
-  if(list.length === 0){
-    return "<li>今使えるものはありません</li>";
-  }
+  return rules.map(rule => renderRule(owner, rule)).join("");
+}
 
-  return list.map(item => `<li>${item}</li>`).join("");
+function renderRule(owner, rule){
+  const id = `${owner}_${rule.name}`;
+  const used = gameState.usedRules[id] ? "used" : "";
+  const cpText = rule.cp ? `CP${rule.cp}` : "CPなし";
+  const buttonText = gameState.usedRules[id] ? "使用済" : "使った";
+
+  return `
+    <div class="rule-row ${used}">
+      <div class="rule-main">
+        <div class="rule-name">${rule.name}</div>
+        <div class="rule-meta">${rule.type} / ${cpText} / ${rule.timing} / ${rule.once}</div>
+        <div class="rule-summary">${rule.summary}</div>
+      </div>
+      <button class="use-button" onclick="toggleRuleUsed('${id}')">${buttonText}</button>
+    </div>
+  `;
+}
+
+function toggleRuleUsed(id){
+  gameState.usedRules[id] = !gameState.usedRules[id];
+  updateScreen();
 }
 
 function changeCP(player, amount){
@@ -230,3 +316,4 @@ function changeVP(player, amount){
     gameState.p2vp = Math.max(0, gameState.p2vp + amount);
   }
   updateScreen();
+}
