@@ -6,6 +6,8 @@ let gameState = {
   activePlayer: 1,
   player1Faction: "Space Marines",
   player2Faction: "Orks",
+  player1Detachment: "Gladius Task Force",
+  player2Detachment: "War Horde",
   p1cp: 0,
   p2cp: 0,
   p1vp: 0,
@@ -17,24 +19,50 @@ window.onload = function(){
 };
 
 function loadFactionSelects(){
-  const p1 = document.getElementById("player1Faction");
-  const p2 = document.getElementById("player2Faction");
+  const p1Faction = document.getElementById("player1Faction");
+  const p2Faction = document.getElementById("player2Faction");
 
-  p1.innerHTML = "";
-  p2.innerHTML = "";
+  p1Faction.innerHTML = "";
+  p2Faction.innerHTML = "";
 
   Object.keys(factionData).forEach(faction => {
-    p1.innerHTML += `<option value="${faction}">${faction}</option>`;
-    p2.innerHTML += `<option value="${faction}">${faction}</option>`;
+    p1Faction.innerHTML += `<option value="${faction}">${faction}</option>`;
+    p2Faction.innerHTML += `<option value="${faction}">${faction}</option>`;
   });
 
-  p1.value = "Space Marines";
-  p2.value = "Orks";
+  p1Faction.value = "Space Marines";
+  p2Faction.value = "Orks";
+
+  loadDetachmentSelects();
+
+  p1Faction.addEventListener("change", loadDetachmentSelects);
+  p2Faction.addEventListener("change", loadDetachmentSelects);
+}
+
+function loadDetachmentSelects(){
+  const p1Faction = document.getElementById("player1Faction").value;
+  const p2Faction = document.getElementById("player2Faction").value;
+
+  const p1Detachment = document.getElementById("player1Detachment");
+  const p2Detachment = document.getElementById("player2Detachment");
+
+  p1Detachment.innerHTML = "";
+  p2Detachment.innerHTML = "";
+
+  factionData[p1Faction].detachments.forEach(detachment => {
+    p1Detachment.innerHTML += `<option value="${detachment}">${detachment}</option>`;
+  });
+
+  factionData[p2Faction].detachments.forEach(detachment => {
+    p2Detachment.innerHTML += `<option value="${detachment}">${detachment}</option>`;
+  });
 }
 
 function startGame(){
   gameState.player1Faction = document.getElementById("player1Faction").value;
   gameState.player2Faction = document.getElementById("player2Faction").value;
+  gameState.player1Detachment = document.getElementById("player1Detachment").value;
+  gameState.player2Detachment = document.getElementById("player2Detachment").value;
 
   document.getElementById("setupScreen").classList.remove("active");
   document.getElementById("gameScreen").classList.add("active");
@@ -59,6 +87,12 @@ function updateScreen(){
 
   document.getElementById("player2Title").textContent =
     "後攻：" + gameState.player2Faction;
+
+  document.getElementById("player1DetachmentText").textContent =
+    gameState.player1Detachment;
+
+  document.getElementById("player2DetachmentText").textContent =
+    gameState.player2Detachment;
 
   document.getElementById("p1cp").textContent = gameState.p1cp;
   document.getElementById("p2cp").textContent = gameState.p2cp;
