@@ -4,3 +4,111 @@ body{
   color:white;
   font-family:Arial, sans-serif;
 }
+
+header{
+  background:#222;
+  padding:12px;
+  text-align:center;
+  border-bottom:2px solid #555;
+}
+
+.round{font-size:20px;font-weight:bold;}
+.phase{color:#ffd966;margin-top:6px;}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+.setup{padding:20px;}
+
+.card{
+  background:#1f1f1f;
+  padding:16px;
+  border-radius:10px;
+  margin-bottom:16px;
+}
+
+label{
+  display:block;
+  margin-bottom:6px;
+  color:#ffd966;
+  font-weight:bold;
+}
+
+select{
+  width:100%;
+  padding:12px;
+  font-size:18px;
+  border-radius:8px;
+  border:none;
+  margin-bottom:12px;
+}
+
+.player{
+  padding:12px;
+  border-bottom:2px solid #333;
+}
+
+.active-player{background:#1d2b3a;}
+.inactive-player{background:#2a1d1d;}
+
+h2{margin:0 0 8px;}
+
+.status{
+  display:flex;
+  gap:10px;
+  margin-bottom:10px;
+}
+
+.badge{
+  background:#333;
+  padding:6px 10px;
+  border-radius:8px;
+}
+
+.box{
+  background:rgba(255,255,255,0.08);
+  padding:10px;
+  border-radius:8px;
+  margin-bottom:10px;
+}
+
+.box-title{
+  color:#ffd966;
+  font-weight:bold;
+  margin-bottom:6px;
+}
+
+ul{
+  margin:0;
+  padding-left:20px;
+}
+
+footer{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:#222;
+  display:flex;
+  gap:8px;
+  padding:10px;
+}
+
+button{
+  flex:1;
+  padding:14px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  color:white;
+  background:#444;
+}
+
+.primary{background:#0078d7;}
+
+main{padding-bottom:80px;}
+
+.note{
+  color:#ccc;
+  font-size:14px;
+}
