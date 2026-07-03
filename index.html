@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Warhammer 40K Navigator</title>
-<link rel="stylesheet" href="style.css?v=07">
+<title>40K対戦ナビゲーター</title>
+<link rel="stylesheet" href="style.css?v=08">
 </head>
 
 <body>
@@ -12,7 +12,7 @@
 <div id="setupScreen" class="screen active">
   <header>
     <div class="round">40K対戦ナビゲーター</div>
-    <div class="phase">Ver.0.7 ゲーム開始設定</div>
+    <div class="phase">Ver.0.8 ゲーム開始設定</div>
   </header>
 
   <main class="setup">
@@ -34,6 +34,10 @@
         <option value="self">自分が先攻</option>
         <option value="opponent">相手が先攻</option>
       </select>
+
+      <p class="note">
+        自分・相手の表示は固定。現在ターンだけが切り替わります。
+      </p>
     </div>
 
     <button class="primary" onclick="startGame()">ゲーム開始</button>
@@ -49,11 +53,15 @@
 
   <main>
     <section class="player self-box">
-      <h2 id="selfTitle">自分</h2>
+      <h2>自分</h2>
 
       <div class="status">
+        <button class="mini" onclick="changeCP('self', -1)">CP-</button>
         <div class="badge">CP：<span id="p1cp">0</span></div>
+        <button class="mini" onclick="changeCP('self', 1)">CP+</button>
+        <button class="mini" onclick="changeVP('self', -1)">VP-</button>
         <div class="badge">VP：<span id="p1vp">0</span></div>
+        <button class="mini" onclick="changeVP('self', 1)">VP+</button>
       </div>
 
       <div class="box">
@@ -76,11 +84,15 @@
     </section>
 
     <section class="player opponent-box">
-      <h2 id="opponentTitle">相手</h2>
+      <h2>相手</h2>
 
       <div class="status">
+        <button class="mini" onclick="changeCP('opponent', -1)">CP-</button>
         <div class="badge">CP：<span id="p2cp">0</span></div>
+        <button class="mini" onclick="changeCP('opponent', 1)">CP+</button>
+        <button class="mini" onclick="changeVP('opponent', -1)">VP-</button>
         <div class="badge">VP：<span id="p2vp">0</span></div>
+        <button class="mini" onclick="changeVP('opponent', 1)">VP+</button>
       </div>
 
       <div class="box">
@@ -99,14 +111,16 @@
   </main>
 
   <footer>
-    <button onclick="backStep()">前へ</button>
+    <button onclick="previousStep()">前へ</button>
     <button onclick="backToSetup()">設定</button>
     <button class="primary" onclick="nextStep()">次へ</button>
   </footer>
+
+  <div class="version" id="versionText">Ver.0.8</div>
 </div>
 
-<script src="data.js?v=07"></script>
-<script src="script.js?v=07"></script>
+<script src="data.js?v=08"></script>
+<script src="script.js?v=08"></script>
 
 </body>
 </html>
