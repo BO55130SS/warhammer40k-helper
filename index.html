@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>40K対戦ナビゲーター</title>
-<link rel="stylesheet" href="style.css?v=08">
+<link rel="stylesheet" href="style.css?v=09">
 </head>
 
 <body>
@@ -12,7 +12,7 @@
 <div id="setupScreen" class="screen active">
   <header>
     <div class="round">40K対戦ナビゲーター</div>
-    <div class="phase">Ver.0.8 ゲーム開始設定</div>
+    <div class="phase">Ver.0.9 ゲーム開始設定</div>
   </header>
 
   <main class="setup">
@@ -36,7 +36,7 @@
       </select>
 
       <p class="note">
-        自分・相手の表示は固定。現在ターンだけが切り替わります。
+        Ver.0.9：フェイズごとのチェックリストと、使用済み管理の土台を追加。
       </p>
     </div>
 
@@ -74,12 +74,12 @@
 
       <div class="box">
         <div class="box-title">今やること</div>
-        <ul id="selfTasks"></ul>
+        <div id="selfTasks"></div>
       </div>
 
       <div class="box">
         <div class="box-title">自分が今使えるもの</div>
-        <ul id="selfAvailable"></ul>
+        <div id="selfAvailable"></div>
       </div>
     </section>
 
@@ -105,7 +105,7 @@
 
       <div class="box important">
         <div class="box-title">相手が今できること</div>
-        <ul id="opponentAvailable"></ul>
+        <div id="opponentAvailable"></div>
       </div>
     </section>
   </main>
@@ -116,11 +116,11 @@
     <button class="primary" onclick="nextStep()">次へ</button>
   </footer>
 
-  <div class="version" id="versionText">Ver.0.8</div>
+  <div class="version" id="versionText">Ver.0.9</div>
 </div>
 
-<script src="data.js?v=08"></script>
-<script src="script.js?v=08"></script>
+<script src="data.js?v=09"></script>
+<script src="script.js?v=09"></script>
 
 </body>
 </html>
