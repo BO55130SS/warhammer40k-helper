@@ -41,6 +41,8 @@ select{
   border-radius:8px;
   border:none;
   margin-bottom:12px;
+  color:#000;
+  background:#fff;
 }
 
 .player{
