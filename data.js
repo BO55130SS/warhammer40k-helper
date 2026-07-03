@@ -1,9 +1,7 @@
 const factionData = {
   "Space Marines": {
     name: "Space Marines",
-    detachments: [
-      "Gladius Task Force"
-    ],
+    detachments: ["Gladius Task Force"],
     armyRules: [
       {
         name: "Oath of Moment",
@@ -15,9 +13,7 @@ const factionData = {
 
   "Orks": {
     name: "Orks",
-    detachments: [
-      "War Horde"
-    ],
+    detachments: ["War Horde"],
     armyRules: [
       {
         name: "Waaagh!",
