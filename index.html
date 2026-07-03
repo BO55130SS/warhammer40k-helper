@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Warhammer 40K Helper</title>
-
 <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,11 +20,17 @@
       <label>プレイヤー1の勢力</label>
       <select id="player1Faction"></select>
 
+      <label>プレイヤー1のデタッチメント</label>
+      <select id="player1Detachment"></select>
+
       <label>プレイヤー2の勢力</label>
       <select id="player2Faction"></select>
 
+      <label>プレイヤー2のデタッチメント</label>
+      <select id="player2Detachment"></select>
+
       <p class="note">
-        Ver.0.4：勢力データを data.js から読み込む形に変更しました。
+        Ver.0.5：勢力選択に加えて、デタッチメント選択を追加しました。
       </p>
     </div>
 
@@ -48,6 +53,13 @@
       </div>
 
       <div class="box">
+        <div class="box-title">デタッチメント</div>
+        <ul>
+          <li id="player1DetachmentText">未選択</li>
+        </ul>
+      </div>
+
+      <div class="box">
         <div class="box-title">今やること</div>
         <ul id="activeTasks"></ul>
       </div>
@@ -63,6 +75,13 @@
       <div class="status">
         <div class="badge">CP：<span id="p2cp">0</span></div>
         <div class="badge">VP：<span id="p2vp">0</span></div>
+      </div>
+
+      <div class="box">
+        <div class="box-title">デタッチメント</div>
+        <ul>
+          <li id="player2DetachmentText">未選択</li>
+        </ul>
       </div>
 
       <div class="box">
