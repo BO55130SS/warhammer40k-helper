@@ -74,6 +74,10 @@ h2{margin:0 0 8px;}
   margin-bottom:10px;
 }
 
+.important{
+  border:2px solid #ffd966;
+}
+
 .box-title{
   color:#ffd966;
   font-weight:bold;
