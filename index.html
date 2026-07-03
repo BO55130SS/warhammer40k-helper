@@ -3,35 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Warhammer 40K Helper</title>
-<link rel="stylesheet" href="style.css?v=10">
+<title>Warhammer 40K Navigator</title>
+<link rel="stylesheet" href="style.css?v=07">
 </head>
 
 <body>
 
 <div id="setupScreen" class="screen active">
   <header>
-    <div class="round">Warhammer 40K Helper</div>
-    <div class="phase">Ver.0.6 ゲーム開始設定</div>
+    <div class="round">40K対戦ナビゲーター</div>
+    <div class="phase">Ver.0.7 ゲーム開始設定</div>
   </header>
 
   <main class="setup">
     <div class="card">
-      <label>プレイヤー1の勢力</label>
+      <label>自分の勢力</label>
       <select id="player1Faction"></select>
 
-      <label>プレイヤー1のデタッチメント</label>
+      <label>自分のデタッチメント</label>
       <select id="player1Detachment"></select>
 
-      <label>プレイヤー2の勢力</label>
+      <label>相手の勢力</label>
       <select id="player2Faction"></select>
 
-      <label>プレイヤー2のデタッチメント</label>
+      <label>相手のデタッチメント</label>
       <select id="player2Detachment"></select>
 
-      <p class="note">
-        勢力とデタッチメントを選んでゲームを開始します。
-      </p>
+      <label>最初のターン</label>
+      <select id="firstTurn">
+        <option value="self">自分が先攻</option>
+        <option value="opponent">相手が先攻</option>
+      </select>
     </div>
 
     <button class="primary" onclick="startGame()">ゲーム開始</button>
@@ -41,12 +43,13 @@
 <div id="gameScreen" class="screen">
   <header>
     <div class="round" id="roundText">第1バトルラウンド</div>
-    <div class="phase" id="phaseText">現在：コマンドフェイズ</div>
+    <div class="turn-banner" id="turnText">自分ターン</div>
+    <div class="phase" id="phaseText">コマンドフェイズ</div>
   </header>
 
   <main>
-    <section class="player active-player">
-      <h2 id="player1Title">先攻</h2>
+    <section class="player self-box">
+      <h2 id="selfTitle">自分</h2>
 
       <div class="status">
         <div class="badge">CP：<span id="p1cp">0</span></div>
@@ -54,25 +57,26 @@
       </div>
 
       <div class="box">
-        <div class="box-title">デタッチメント</div>
+        <div class="box-title">自分の情報</div>
         <ul>
-          <li id="player1DetachmentText">未選択</li>
+          <li id="selfFactionText"></li>
+          <li id="selfDetachmentText"></li>
         </ul>
       </div>
 
       <div class="box">
-        <div class="box-title">アーミールール</div>
-        <ul id="player1ArmyRules"></ul>
+        <div class="box-title">今やること</div>
+        <ul id="selfTasks"></ul>
       </div>
 
       <div class="box">
-        <div class="box-title">今やること</div>
-        <ul id="activeTasks"></ul>
+        <div class="box-title">自分が今使えるもの</div>
+        <ul id="selfAvailable"></ul>
       </div>
     </section>
 
-    <section class="player inactive-player">
-      <h2 id="player2Title">後攻</h2>
+    <section class="player opponent-box">
+      <h2 id="opponentTitle">相手</h2>
 
       <div class="status">
         <div class="badge">CP：<span id="p2cp">0</span></div>
@@ -80,33 +84,29 @@
       </div>
 
       <div class="box">
-        <div class="box-title">デタッチメント</div>
+        <div class="box-title">相手の情報</div>
         <ul>
-          <li id="player2DetachmentText">未選択</li>
+          <li id="opponentFactionText"></li>
+          <li id="opponentDetachmentText"></li>
         </ul>
-      </div>
-
-      <div class="box">
-        <div class="box-title">相手のアーミールール</div>
-        <ul id="player2ArmyRules"></ul>
       </div>
 
       <div class="box important">
         <div class="box-title">相手が今できること</div>
-        <ul id="inactiveTasks"></ul>
+        <ul id="opponentAvailable"></ul>
       </div>
     </section>
   </main>
 
   <footer>
-    <button onclick="backToSetup()">設定へ戻る</button>
-    <button>質問</button>
-    <button class="primary">完了して次へ</button>
+    <button onclick="backStep()">前へ</button>
+    <button onclick="backToSetup()">設定</button>
+    <button class="primary" onclick="nextStep()">次へ</button>
   </footer>
 </div>
 
-<script src="data.js?v=10"></script>
-<script src="script.js?v=10"></script>
+<script src="data.js?v=07"></script>
+<script src="script.js?v=07"></script>
 
 </body>
 </html>
